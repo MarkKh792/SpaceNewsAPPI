@@ -1,4 +1,4 @@
-package com.example.pomslr.adapter;
+package com.example.pomslr.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.bumptech.glide.Glide;
-import com.example.pomslr.MainActivity;
+import com.example.pomslr.view.MainActivity;
 import com.example.pomslr.R;
-import com.example.pomslr.entity.Article;
-import com.example.pomslr.fragment.ArticleFragment;
+import com.example.pomslr.model.api.Article;
+import com.example.pomslr.view.fragment.ArticleFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -67,7 +67,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             public void onClick(View v) {
 
                 MainActivity.selectedArticle = articleList.get(holder.getAbsoluteAdapterPosition());
-                        //.getId();
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_container_view, ArticleFragment.class, null)
                         .setReorderingAllowed(true)
@@ -90,7 +89,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         notifyDataSetChanged();
 
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 

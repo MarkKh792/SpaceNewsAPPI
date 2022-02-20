@@ -1,4 +1,4 @@
-package com.example.pomslr.entity;
+package com.example.pomslr.model.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

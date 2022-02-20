@@ -1,27 +1,28 @@
-package com.example.pomslr;
+package com.example.pomslr.view;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.widget.TextView;
 
-import com.example.pomslr.entity.Article;
-
-import java.util.ArrayList;
+import com.example.pomslr.R;
+import com.example.pomslr.model.api.Article;
 
 public class MainActivity extends AppCompatActivity {
 
     public static Article selectedArticle;
+    private static Context context;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
+    }
+
+    public static Context getContext() {
+        return context;
     }
 }

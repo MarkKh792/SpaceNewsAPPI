@@ -1,9 +1,7 @@
-package com.example.pomslr.entity;
+package com.example.pomslr.model.api;
 
 import java.util.List;
 
-import com.example.pomslr.entity.Event;
-import com.example.pomslr.entity.Launch;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
