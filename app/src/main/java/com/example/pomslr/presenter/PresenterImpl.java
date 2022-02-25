@@ -30,16 +30,19 @@ public class PresenterImpl implements Presenter {
             @Override
             public void onNext(@NonNull ArrayList<Article> articles) {
                 if (articles != null && !articles.isEmpty()) {
+                    model.clearTable();
+                    model.insertIntoDB(articles);
                     newsListFragment.showList(articles);
-                    //model.insertIntoDB(articles);
                 } else {
                     newsListFragment.showEmptyList();
+
                 }
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
-                newsListFragment.showError(e.getMessage());
+                newsListFragment.showList(model.readFromDB());
+                newsListFragment.showError("Загрузка данных из БД"); // e.getMessage()
             }
 
             @Override

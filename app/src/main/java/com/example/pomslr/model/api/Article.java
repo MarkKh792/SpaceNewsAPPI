@@ -38,6 +38,15 @@ import com.google.gson.annotations.SerializedName;
         @Expose
         private List<Event> events = null;
 
+        public Article(Integer id, String title, String imageUrl, String newsSite, String summary, String publishedAt) {
+            this.id = id;
+            this.title = title;
+            this.imageUrl = imageUrl;
+            this.newsSite = newsSite;
+            this.summary = summary;
+            this.publishedAt = publishedAt;
+        }
+
         public Integer getId() {
             return id;
         }
