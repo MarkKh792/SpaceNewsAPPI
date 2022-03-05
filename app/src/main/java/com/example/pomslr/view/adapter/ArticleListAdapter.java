@@ -83,7 +83,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
     }
 
     public void setItems (Collection<Article> articles){
-        System.out.println("-------------"+ articles);
         articleList.addAll(articles);
         articles.clear();
         notifyDataSetChanged();

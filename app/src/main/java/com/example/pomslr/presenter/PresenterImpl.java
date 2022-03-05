@@ -30,8 +30,9 @@ public class PresenterImpl implements Presenter {
             @Override
             public void onNext(@NonNull ArrayList<Article> articles) {
                 if (articles != null && !articles.isEmpty()) {
-                    model.clearTable();
-                    model.insertIntoDB(articles);
+                    //model.clearTable();
+                    //model.insertIntoDB(articles);
+                    model.insertDataIntoDB(articles);
                     newsListFragment.showList(articles);
                 } else {
                     newsListFragment.showEmptyList();
@@ -41,8 +42,8 @@ public class PresenterImpl implements Presenter {
 
             @Override
             public void onError(@NonNull Throwable e) {
-                newsListFragment.showList(model.readFromDB());
-                newsListFragment.showError("Загрузка данных из БД"); // e.getMessage()
+                newsListFragment.showList(model.getDataObservable().blockingFirst());
+                newsListFragment.showError("Нет подключения к сети"); // e.getMessage()
             }
 
             @Override

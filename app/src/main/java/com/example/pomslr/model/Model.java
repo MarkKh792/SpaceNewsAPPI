@@ -13,9 +13,14 @@ import com.example.pomslr.view.MainActivity;
 import com.example.pomslr.view.fragment.ArticleFragment;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class Model {
@@ -24,25 +29,26 @@ public class Model {
     ArticlesDBHelper dbHelper;// = new ArticlesDBHelper(MainActivity.getContext());
 
     public Observable<ArrayList<Article>> getObservableArticle() {
+
         return spaceFlightNewsApi.getAllPostsObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public void insertIntoDB(ArrayList<Article> articlelist){
+    public void insertIntoDB(ArrayList<Article> articleList){
 
         dbHelper = new ArticlesDBHelper(MainActivity.getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        for (int i = 0; i < articlelist.size(); i++){
-            System.out.println(articlelist.get(i).getId());
+        for (int i = 0; i < articleList.size(); i++){
+            System.out.println(articleList.get(i).getId());
             ContentValues values = new ContentValues();
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_ARTICLE_ID, articlelist.get(i).getId());
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_TITLE, articlelist.get(i).getTitle());
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_SITE_URL, articlelist.get(i).getNewsSite());
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_IMAGE_URL, articlelist.get(i).getImageUrl());
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_SUMMARY, articlelist.get(i).getSummary());
-            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_PUBLISHED_AT, articlelist.get(i).getPublishedAt());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_ARTICLE_ID, articleList.get(i).getId());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_TITLE, articleList.get(i).getTitle());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_SITE_URL, articleList.get(i).getNewsSite());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_IMAGE_URL, articleList.get(i).getImageUrl());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_SUMMARY, articleList.get(i).getSummary());
+            values.put(ArticleContract.ArticleEntry.COLUMN_NAME_PUBLISHED_AT, articleList.get(i).getPublishedAt());
             db.insert(ArticleContract.ArticleEntry.TABLE_NAME, null, values);
         }
 
@@ -67,6 +73,48 @@ public class Model {
             System.out.println("DATA: " + articleListFromDB.get(c.getPosition()).getId());
         }
         return articleListFromDB;
+    }
+
+    public Callable<ArrayList<Article>> readObservableFromDB() {
+
+        return new Callable<ArrayList<Article>>() {
+            @Override
+            public ArrayList<Article> call() throws Exception {
+                return readFromDB();
+            }
+        };
+    }
+
+    private static Observable<ArrayList<Article>> makeObservable (final Callable<ArrayList<Article>> func){
+
+        return Observable.create(new ObservableOnSubscribe<ArrayList<Article>>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<ArrayList<Article>> emitter) throws Throwable {
+                ArrayList<Article> observed = func.call();
+                if(observed != null) {
+                    emitter.onNext(observed);
+                }
+                emitter.onComplete();
+            }
+        });
+    }
+
+    public  Observable<ArrayList<Article>> getDataObservable(){
+
+        return makeObservable(readObservableFromDB());
+    }
+
+    public void insertDataIntoDB(ArrayList<Article> incomingArticleList){
+
+       Callable<Void> clb = new Callable<Void>() {
+           @Override
+           public Void call() throws Exception {
+               clearTable();
+               insertIntoDB(incomingArticleList);
+               return null;
+           }
+       };
+       Completable.fromCallable(clb).subscribe();
     }
 
     public void clearTable(){
